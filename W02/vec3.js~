@@ -139,10 +139,10 @@ Vec3.prototype.max = function()
 }
 
 // AreaOfTriangle method
-Vec3.prototype.areaOfTriangle = function(v1, v2)
+Vec3.prototype.areaOfTriangle = function(v0, v1, v2)
 {
-    var v01 = v1.sub(this);
-    var v02 = v2.sub(this);
+    var v01 = v1.sub(v0);
+    var v02 = v2.sub(v0);
     var S = v01.abs() * v02.abs() - v01.inn(v02) * v01.inn(v02);
     return Math.sqrt(S)/2;
 }
