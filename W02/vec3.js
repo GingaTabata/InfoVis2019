@@ -7,7 +7,7 @@ Vec3 = function( x,y,z )
 }
 
 // Add method
-Vec3.prototype.add = fnction( v )
+Vec3.prototype.add = function( v )
 {
     this.x += v.x;
     this.y += v.y;
@@ -34,29 +34,71 @@ Vec3.prototype.min = function()
     return min;
 }
 
-// Mid method
+// Mid methodVec3.prototype.mid = function()
 Vec3.prototype.mid = function()
 {
     var min;
+    var mindata;
     min = this.x;
-    if(min>this.y)
-	min = this.y;
-    if(min>this.z)
-	min = this.z;
-    var max;
-    max = this.x;
-    if(max<this.y)
-	max = this.y;
-    if(max<this.z)
-	max = this.z;
-    return max;
-    if(this.x >= min && this.x <= max)
-	return this.x;
-    else if(this.y >= min && this.y <= max)
-	return this.y;
-    else
-	return this.z;
+    mindata = 1;
+    if(min>this.y){
+        min = this.y;
+	mindata = 2;
+    }
+    if(min>this.z){
+        min = this.z;
+	mindata = 3;
+    }
     
+    var max;
+    var maxdata;
+    max = this.z;
+    maxdata = 3;
+    if(max<this.y){
+        max = this.y;
+	maxdata = 2;
+    }
+    if(max<this.x){
+        max = this.x;
+	maxdata = 1;
+    }
+    
+    switch ( mindata )
+	{
+	case 1:
+	    switch ( maxdata )
+		{
+		case 2:
+		    return this.z;
+		    break;
+		case 3:
+		    return this.y;
+		    break;
+		}
+	    break;
+	case 2:
+            switch ( maxdata )
+                {
+                case 1:
+                    return this.z;
+                    break;
+                case 3:
+                    return this.x;
+                    break;
+                }
+            break;
+	case 3:
+            switch ( maxdata )
+                {
+                case 1:
+                    return this.y;
+                    break;
+                case 2:
+                    return this.x;
+                    break;
+                }
+            break;
+	}
 }
 
 // Max method
