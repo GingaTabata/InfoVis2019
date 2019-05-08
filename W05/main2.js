@@ -103,6 +103,18 @@ function main()
     //    var material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
     var material = new THREE.MeshBasicMaterial();
     material.vertexColors = THREE.FaceColors;
+    geometry.faces[0].color = new THREE.Color( 1, 0, 0 );
+    geometry.faces[1].color = new THREE.Color( 1, 0, 0 );
+    geometry.faces[2].color = new THREE.Color( 1, 0, 0 );
+    geometry.faces[3].color = new THREE.Color( 1, 0, 0 );
+    geometry.faces[4].color = new THREE.Color( 1, 0, 0 );
+    geometry.faces[5].color = new THREE.Color( 1, 0, 0 );
+    geometry.faces[6].color = new THREE.Color( 1, 0, 0 );
+    geometry.faces[7].color = new THREE.Color( 1, 0, 0 );
+    geometry.faces[8].color = new THREE.Color( 1, 0, 0 );
+    geometry.faces[9].color = new THREE.Color( 1, 0, 0 );
+    geometry.faces[10].color = new THREE.Color( 1, 0, 0 );
+    geometry.faces[11].color = new THREE.Color( 1, 0, 0 );
 
     var cube = new THREE.Mesh( geometry, material );
     scene.add( cube );
@@ -112,33 +124,34 @@ function main()
     function loop()
     {
         requestAnimationFrame( loop );
-        cube.rotation.x += 0.01;
+        cube.rotation.x += 0.02;
         cube.rotation.y += 0.01;
+	cube.rotation.z += 0.01;
         renderer.render( scene, camera );
     }
 
-    //mousedown関数
+    //mousedown
     document.addEventListener( 'mousedown', mouse_down_event );
     function mouse_down_event( event )
     {
-	
-    }
-    var raycaster = new THREE.Raycaster( origin, direction );
-    var intersects = raycaster.intersectObject( triangle );
-    if ( intersects.length > 0 )
+	var x_win = event.clientX;
+	var y_win = event.clientY;
+	var vx = renderer.domElement.offsetLeft;
+	var vy = renderer.domElement.offsetTop;
+	var vw = renderer.domElement.width;
+	var vh = renderer.domElement.height;
+	var x_NDC = 2 * ( x_win - vx ) / vw - 1;
+	var y_NDC = -( 2 * ( y_win - vy ) / vh - 1 );
+	var p_NDC = new THREE.Vector3( x_NDC, y_NDC, 1 );
+	var p_wld = p_NDC.unproject( camera );
+	var origin = camera.position;
+	var direction = p_wld.sub( origin ).normalize();
+	var raycaster = new THREE.Raycaster( origin, direction );
+	var intersects = raycaster.intersectObject( cube );
+	if ( intersects.length > 0 )
 	{
-	    intersects[0].face.color.setRGB( 1, 0, 0 );
+	    intersects[0].face.color.setRGB( 0, 1, 0 );
 	    intersects[0].object.geometry.colorsNeedUpdate = true;
 	}
-    var x_win = event.clientX;
-    var y_win = event.clientY;
-    var vx = renderer.domElement.offsetLeft;
-    var vy = renderer.domElement.offsetTop;
-    var vw = renderer.domElement.width;
-    var vh = renderer.domElement.height;
-    var x_NDC = 2 * ( x_win - vx ) / vw - 1;
-    var y_NDC = -( 2 * ( y_win - vy ) / vh - 1 );
-    var p_NDC = new THREE.Vector3( x_NDC, y_NDC, 1 );
-    var p_wld = p_NDC.unproject( camera );
-
+    }   
 }
