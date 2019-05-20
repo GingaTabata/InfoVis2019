@@ -32,9 +32,9 @@ function main()
     ];
 
     var scalars = [
-	0,   // S0
-        114, // S1
-        255  // S2
+	0.1,   // S0
+        0.2, // S1
+        0.8  // S2
     ];
 
     // Create color map
@@ -83,12 +83,13 @@ function main()
     {
         var id = faces[i];
 	var maxmin = Math.max.apply(null, scalars)-Math.min.apply(null, scalars);
-        var S0 = (scalars[ id[0] ]-1)*255/maxmin-1;
-        var S1 = (scalars[ id[1] ]-1)*255/maxmin-1;
-	var S2 = (scalars[ id[2] ]-1)*255/maxmin-1;
-        var C0 = new THREE.Color().setHex( cmap[ S0 ][1] );
-        var C1 = new THREE.Color().setHex( cmap[ S1 ][1] );
-        var C2 = new THREE.Color().setHex( cmap[ S2 ][1] );
+	var min = Math.min.apply(null, scalars);
+        var S0 = (scalars[ id[0] ]-min)/maxmin*255;
+        var S1 = (scalars[ id[1] ]-min)/maxmin*255;
+	var S2 = (scalars[ id[2] ]-min)/maxmin*255;
+        var C0 = new THREE.Color().setHex( cmap[ Math.round(S1) ][1] );
+        var C1 = new THREE.Color().setHex( cmap[ Math.round(S1) ][1] );
+        var C2 = new THREE.Color().setHex( cmap[ Math.round(S2) ][1] );
         geometry.faces[i].vertexColors.push( C0 );
         geometry.faces[i].vertexColors.push( C1 );
         geometry.faces[i].vertexColors.push( C2 );
