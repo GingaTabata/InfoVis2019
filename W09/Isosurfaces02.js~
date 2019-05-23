@@ -125,8 +125,8 @@ function Isosurfaces( volume, isovalue )
         //return new THREE.Vector3().addVectors( v0, v1 ).divideScalar( 2 );
 	var index = [ v0.x*volume.resolution.x + v0.y*volume.resolution.y + v0.z*volume.resolution.z,
 		      v1.x*volume.resolution.x + v1.y*volume.resolution.y + v1.z*volume.resolution.z ];
-	var t = (s - cell_node_indices( index[0] )[0]) / 
-	    (cell_node_indices( index[1] )[0] - cell_node_indices( index[0] )[0]);
+	var t = s - cell_node_indices( index[0] )[0] / 
+	    cell_node_indices( index[1] )[0] - cell_node_indices( index[0] )[0];
 	return new THREE.Vector3().addVectors( v0.addScalar(1-t), v1.addScalar(t));
     }
 }
