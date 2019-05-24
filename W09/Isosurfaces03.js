@@ -1,7 +1,19 @@
 function Isosurfaces( volume, isovalue )
 {
     var geometry = new THREE.Geometry();
-    var material = new THREE.MeshLambertMaterial();
+    //var material = new THREE.MeshLambertMaterial();
+    var scene = new THREE.Scene();
+    var light = new THREE.PointLight();
+    light.position.set( 5, 5, 5 );
+    scene.add( light );
+    var material = new THREE.ShaderMaterial({
+	    vertexColors: THREE.VertexColors,
+	    vertexShader: document.getElementById('phong.vert').text,
+	    fragmentShader: document.getElementById('phong.frag').text,
+	    uniforms: {
+		light_position: { type: 'v3', value: light.position }
+	    }
+	});
     
     var smin = volume.min_value;
     var smax = volume.max_value;
@@ -74,7 +86,7 @@ function Isosurfaces( volume, isovalue )
     
     geometry.computeVertexNormals();
     
-    material.color = new THREE.Color().setHex( cmap[ isovalue ][1] );
+    //material.color = new THREE.Color().setHex( cmap[ isovalue ][1] );
         
     return new THREE.Mesh( geometry, material );
     
