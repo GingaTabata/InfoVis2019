@@ -12,8 +12,9 @@ function main()
     var bounds = Bounds( volume );
     screen.scene.add( bounds );
     
-    var isovalue = 125;
-    var surfaces = Isosurfaces( volume, isovalue );
+    var point = new THREE.Vector3(60,60,17);
+    var normal = new THREE.Vector3(1,0,4);
+    var surfaces = Slice( volume, point, normal );
     screen.scene.add( surfaces );
     
     document.addEventListener( 'mousemove', function() {

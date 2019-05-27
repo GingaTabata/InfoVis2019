@@ -1,35 +1,11 @@
 function Isosurfaces( volume, isovalue )
 {
     var geometry = new THREE.Geometry();
-    //var material = new THREE.MeshLambertMaterial();
-    var scene = new THREE.Scene();
-    var light = new THREE.PointLight();
-    light.position.set( 5, 5, 5 );
-    scene.add( light );
-    var material = new THREE.ShaderMaterial({
-	    vertexColors: THREE.VertexColors,
-	    vertexShader: document.getElementById('phong.vert').text,
-	    fragmentShader: document.getElementById('phong.frag').text,
-	    uniforms: {
-		light_position: { type: 'v3', value: light.position }
-	    }
-	});
+    var material = new THREE.MeshLambertMaterial();
     
     var smin = volume.min_value;
     var smax = volume.max_value;
     isovalue = KVS.Clamp( isovalue, smin, smax );
-    
-    // Create color map
-    var cmap = [];
-    for ( var i = 0; i < 256; i++ )
-    {
-        var S = i / 255.0; // [0,1]
-        var R = Math.max( Math.cos( ( S - 1.0 ) * Math.PI ), 0.0 );
-        var G = Math.max( Math.cos( ( S - 0.5 ) * Math.PI ), 0.0 );
-        var B = Math.max( Math.cos( S * Math.PI ), 0.0 );
-        var color = new THREE.Color( R, G, B );
-        cmap.push( [ S, '0x' + color.getHexString() ] );
-    }
     
     var lut = new KVS.MarchingCubesTable();
     var cell_index = 0;
@@ -86,7 +62,19 @@ function Isosurfaces( volume, isovalue )
     
     geometry.computeVertexNormals();
     
-    //material.color = new THREE.Color().setHex( cmap[ isovalue ][1] );
+    // Create color map
+    var cmap = [];
+    for ( var i = 0; i < 256; i++ )
+    {
+        var S = i / 255.0; // [0,1]
+        var R = Math.max( Math.cos( ( S - 1.0 ) * Math.PI ), 0.0 );
+        var G = Math.max( Math.cos( ( S - 0.5 ) * Math.PI ), 0.0 );
+        var B = Math.max( Math.cos( S * Math.PI ), 0.0 );
+        var color = new THREE.Color( R, G, B );
+        cmap.push( [ S, '0x' + color.getHexString() ] );
+    }
+    
+    material.color = new THREE.Color().setHex( cmap[ isovalue ][1] );
         
     return new THREE.Mesh( geometry, material );
     
