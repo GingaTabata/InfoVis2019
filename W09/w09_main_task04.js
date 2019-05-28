@@ -13,7 +13,7 @@ function main()
     screen.scene.add( bounds );
     
     var point = new THREE.Vector3(60,60,17);
-    var normal = new THREE.Vector3(1,0,4);
+    var normal = new THREE.Vector3(1,1,1);
     var surfaces = Slice( volume, point, normal );
     screen.scene.add( surfaces );
     

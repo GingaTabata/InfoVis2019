@@ -1,8 +1,6 @@
 function Slice( volume, point, normal )
 {
-    //var w = point.clone().multiplyScalar( -1 ).dot( normal );
-    var w = -normal.x * point.x - normal.y * point.y - normal.z * point.z;
-    var coef = new THREE.Vector4( normal.x, normal.y, normal.z, w );
+    var d = -normal.x * point.x - normal.y * point.y - normal.z * point.z;
     
     var geometry = new THREE.Geometry();
     var material = new THREE.MeshBasicMaterial();
@@ -56,7 +54,6 @@ function Slice( volume, point, normal )
                     // Create color map
                     var cmap = [];
                     
-                    
                     for ( var i = 0; i < 256 ; i++ )
                     {
                         var S = i/255.0; // [0,1]
@@ -92,14 +89,14 @@ function Slice( volume, point, normal )
     
     function table_index( x, y, z )
     {
-        var s0 = plane_function( x,     y,     z     );
-        var s1 = plane_function( x + 1, y,     z     );
-        var s2 = plane_function( x + 1, y + 1, z     );
-        var s3 = plane_function( x,     y + 1, z     );
-        var s4 = plane_function( x,     y,     z + 1 );
-        var s5 = plane_function( x + 1, y,     z + 1 );
-        var s6 = plane_function( x + 1, y + 1, z + 1 );
-        var s7 = plane_function( x,     y + 1, z + 1 );
+        var s0 = plane( x,   y,   z   );
+        var s1 = plane( x+1, y,   z   );
+        var s2 = plane( x+1, y+1, z   );
+        var s3 = plane( x,   y+1, z   );
+        var s4 = plane( x,   y,   z+1 );
+        var s5 = plane( x+1, y,   z+1 );
+        var s6 = plane( x+1, y+1, z+1 );
+        var s7 = plane( x,   y+1, z+1 );
         
         var index = 0;
         if ( s0 > 0 ) { index |=   1; }
@@ -119,76 +116,54 @@ function Slice( volume, point, normal )
         if( v0.x != v1.x ){
             var s0 = v0.x;
             var s1 = v1.x;
-            var s =  (-coef.y * v0.y - coef.z * v0.z -coef.w) / coef.x;
+            var s =  (- normal.y * v0.y - normal.z * v0.z - d) / normal.x;
             return new THREE.Vector3( s , v0.y , v0.z );
         }
         if( v0.y != v1.y ){
             var s0 = v0.y;
             var s1 = v1.y;
-            var s =   (-coef.x * v0.x - coef.z * v0.z -coef.w) / coef.y;
+            var s =  (- normal.x * v0.x - normal.z * v0.z - d) / normal.y;
             return new THREE.Vector3( v0.x , s , v0.z );
         }
         if( v0.z != v1.z ){
             var s0 = v0.z;
             var s1 = v1.z;
-            var s =  (-coef.x * v0.x - coef.y * v0.y -coef.w) / coef.z;
+            var s =  (- normal.x * v0.x - normal.y * v0.y - d ) / normal.z;
             return new THREE.Vector3( v0.x , v0.y , s );
         }
-        
-        /*var p = ( 2*s - ( s0 + s1 ) ) / ( s1 - s0 );
-         var x = ( v1.x - v0.x)*p/2 + ( v0.x + v1.x ) / 2;
-         
-         p = ( 2*s - ( s0 + s1 ) )/( s1 - s0 );
-         var y = ( v1.y - v0.y ) * p / 2 + ( v0.y + v1.y ) / 2;
-         
-         p = ( 2*s - ( s0 + s1 ) ) / ( s1 - s0 );
-         var z = ( v1.z - v0.z ) * p / 2 + ( v0.z + v1.z ) / 2;
-         
-         return new THREE.Vector3( x , y , z );*/
     }
     
     function interpolated_value( v0, v1 )
     {
-        /* var s0 = plane_function( v0.x, v0.y, v0.z );
-         var s1 = plane_function( v1.x, v1.y, v1.z );
-         var a = Math.abs( s0 / ( s1 - s0 ) );*/
+        var index = [ (v0.z * volume.resolution.x * volume.resolution.y + v0.y * volume.resolution.x + v0.x),
+                     (v1.z * volume.resolution.x * volume.resolution.y + v1.y * volume.resolution.x + v1.x) ];
         
-        var id0 = index_of( v0 );
-        var id1 = index_of( v1 );
-        
-        var s0  = volume.values[id0][0];
-        var s1  = volume.values[id1][0]
+        var s0  = volume.values[index[0]][0];
+        var s1  = volume.values[index[1]][0]
         
         var v01 = interpolated_vertex( v0 , v1 );
         
         if( v0.x != v1.x){
-            var p = ( 2*v01.x - ( v0.x + v1.x ) )/( v1.x - v0.x );
-            var s01 = ( s1 - s0 )*p/2 + ( s0 + s1 )/2;
+            var t = (v01.x - v0.x) / (v1.x - v0.x);
+            var s01 = (1-t)*s0 + t*s1;
         }
         
         if( v0.y != v1.y){
-            var p = ( 2*v01.y - ( v0.y + v1.y ) )/( v1.y - v0.y );
-            var s01 = ( s1 - s0 )*p/2 + ( s0 + s1 )/2;
+            var t = (v01.y - v0.y) / (v1.y - v0.y);
+            var s01 = (1-t)*s0 + t*s1;
         }
         
         if( v0.z != v1.z){
-            var p = ( 2*v01.z - ( v0.z + v1.z ) )/( v1.z - v0.z );
-            var s01 = ( s1 - s0 )*p/2 + ( s0 + s1 )/2;
+            var t = (v01.z - v0.z) / (v1.z - v0.z);
+            var s01 = (1-t)*s0 + t*s1;
         }
         
         return  Math.round( s01 );
-        
-        function index_of( v )
-        {
-            var lines = volume.resolution.x;
-            var slices = volume.resolution.x * volume.resolution.y;
-            return Math.floor( v.x + v.y * lines + v.z * slices );
-        }
     }
     
-    function plane_function( x, y, z )
+    function plane( x, y, z )
     {
-        return coef.x * x + coef.y * y + coef.z * z + coef.w;
+        return normal.x * x + normal.y * y + normal.z * z + d;
     }
 }
 
