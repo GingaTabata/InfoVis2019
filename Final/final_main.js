@@ -15,7 +15,7 @@ function main01(iso)
     
     //Isosurface
     var material = new THREE.MeshLambertMaterial();
-    var isovalue = iso;//document.getElementById("isovalue");
+    var isovalue = iso;
     var surfaces = Isosurfaces( volume, isovalue, material );
     screen.scene.add( surfaces );
     
@@ -133,6 +133,7 @@ function main01(iso)
     
     document.getElementById("change-isovalue-button").onclick = function() {
         screen.scene.remove( surfaces );
+        material = new THREE.MeshLambertMaterial();
         var elem = document.getElementById('isovalue');
         var newSurfaces = Isosurfaces( volume, elem.value, material );
         screen.scene.add( newSurfaces );
@@ -158,13 +159,11 @@ function main02()
     
     //Slice
     var point = new THREE.Vector3(60,60,17);
-    var normal = new THREE.Vector3(1,1,1);
-    var surfaces = Slice( volume, point, normal );
+    var normal = new THREE.Vector3(0,0,1);
+    var slice = Orthoslice( volume, point, normal );
+    screen.scene.add( slice );
     
-    //Isosurface
-    //var isovalue = 125;
-    //var surfaces = Isosurfaces( volume, isovalue );
-    screen.scene.add( surfaces );
+    var slices = [ slice, slice ];
     
     document.addEventListener( 'mousemove', function() {
                               screen.light.position.copy( screen.camera.position );
@@ -174,72 +173,35 @@ function main02()
                             screen.resize( [ window.innerWidth * 0.5, window.innerHeight ] );
                             });
     
-    var light = new THREE.PointLight();
-    light.position.set( 5, 5, 5 );
-    screen.scene.add( light );
-    
-    /*var material = new THREE.ShaderMaterial({
-                                            vertexColors: THREE.VertexColors,
-                                            vertexShader: document.getElementById('phong.vert').text,
-                                            fragmentShader: document.getElementById('phong.frag').text,
-                                            });*/
-    
     screen.loop();
     
-    /*function(){
-     var slider = document.getElementById('slider1');
-     var output = document.getElementById('slider1o');
-     
-     var input = slider.getElementsByTagName('input')[0];
-     var root = document.documentElement;
-     var dragging = false;
-     var value = output.value;// 初期位置
-     var width = input.clientWidth / 2;
-     
-     var set_value = function (){
-     // つまみのサイズ(input.clientWidth)だけ位置を調整
-     input.style.left = (value - input.clientWidth/2) + 'px';
-     output.value = value;
-     };
-     set_value();
-     
-     // 目盛り部分をクリックしたとき
-     slider.onclick = function(evt){
-     dragging = true;
-     document.onmousemove(evt);
-     document.onmouseup();
-     };
-     // ドラッグ開始
-     input.onmousedown = function(evt){
-     dragging = true;
-     return false;
-     };
-     // ドラッグ終了
-     document.onmouseup = function(evt){
-     if (dragging) {
-     dragging = false;
-     output.value = value;
-     }
-     };
-     document.onmousemove = function(evt){
-     if(dragging){
-     // ドラッグ途中
-     if(!evt){
-     evt = window.event;
-     }
-     var left = evt.clientX;
-     var rect = slider.getBoundingClientRect();
-     // マウス座標とスライダーの位置関係で値を決める
-     value = Math.round(left - rect.left - width);
-     // スライダーからはみ出したとき
-     if (value < 0) {
-     value = 0;
-     } else if (value > slider.clientWidth) {
-     value = slider.clientWidth;
-     }
-     set_value();
-     return false;
-     }
-     };
-     };*/
+    document.getElementById("rep").onclick = function() {
+        for(var i=0; i < slices.length; i = i+1){
+            screen.scene.remove( slices[i] );
+        }
+        var n1 = document.normalpoint.num1.value;
+        var n2 = document.normalpoint.num2.value;
+        var n3 = document.normalpoint.num3.value;
+        var p1 = document.normalpoint.num4.value;
+        var p2 = document.normalpoint.num5.value;
+        var p3 = document.normalpoint.num6.value;
+        var normal = new THREE.Vector3(n1, n2, n3);
+        var point = new THREE.Vector3(p1, p2, p3);
+        var newSlice = Orthoslice( volume, point, normal );
+        screen.scene.add(newSlice);
+        slices.push( newSlice );
+    };
+    document.getElementById("add").onclick = function() {
+        var n1 = document.normalpoint.num1.value;
+        var n2 = document.normalpoint.num2.value;
+        var n3 = document.normalpoint.num3.value;
+        var p1 = document.normalpoint.num4.value;
+        var p2 = document.normalpoint.num5.value;
+        var p3 = document.normalpoint.num6.value;
+        var normal = new THREE.Vector3(n1, n2, n3);
+        var point = new THREE.Vector3(p1, p2, p3);
+        var newSlice = Orthoslice( volume, point, normal );
+        screen.scene.add( newSlice );
+        slices.push( newSlice );
+    };
 }

@@ -4,7 +4,7 @@
   </head>
   <h1>Infomation Visualization</h1>
   <h2>Isosurfaces</h2>
-  <p>Visualization is sugoi. Yabai.Yabeeeeeeeeeeee!! Uwaaaaaaaaaaaaaaaaaaaaaaaa!!!!!</p>
+  <p>Here you can see the isosurfaces of the lobster volume data. Use the sliders on the right below to set the iso value you want to see. When the "Apply" button is pressed, the isosurface colored by the rainbow color map is output based on the isovalue set at that time. Pressing each button below the slider will apply the respective shader and reflection model.</p>
   <div id="display1" style="width:50%; float:left;"></div>
   <div id="controller1" style="width:50%; float:right;">
       <label id="label" style="font-family:Arial;"></label>
@@ -38,10 +38,8 @@
     <script src="https://naohisas.github.io/KVS.js/Build/KVS.min.js"></script>
     <script src="https://naohisas.github.io/KVS.js/Build/KVS2THREE.min.js"></script>
     <script src="https://naohisas.github.io/KVS.js/Source/KVSLobsterData.js"></script>
-    <!--<script src="https://naohisas.github.io/KVS.js/Source/KVSCreateTornadoData.js"></script>-->
-    <!--<script src="https://cdn.klacansky.com/open-scivis-datasets/bonsai/bonsai_256x256x256_uint8.raw"></script>-->
     <script src="Bounds.js"></script>
-    <script src="Slice.js"></script>
+    <script src="Orthoslice.js"></script>
     <script src="Isosurfaces.js"></script>
     <script type="x-shader/x-vertex" id="gou-lam.vert">
         varying vec3 point_color;
@@ -432,11 +430,23 @@
     </script>
   </body>
   <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-  <h2>Slice</h2>
-  <p>visualization is sugoi. Yabai.</p>
+  <h2>Orthoslice</h2>
+  <p>Here you can see the orthoslice of the lobster volume data. In the right-hand space below, enter the normal vector of the section you want to see, and the coordinates of the point through which the face passes. Note that this space is 0 ≦ x ≦ 118, 0 ≦ y ≦ 118, 0 ≦ z ≦ 32. When the "Replace" button is pressed, the section is output based on the value entered at that time after erasing all the sections output so far. When the "Add" button is pressed, the section is output without erasing the section output so far. </p>
   <div id="display2" style="width:50%; float:left;"></div>
   <div id="controller2" style="width:50%; float:right;">
-      <input type="range" min="0" max="254" step="1" value="125" id="isovalue"/>
+      <form name="normalpoint">
+          normal=(
+          <input type="number" name="num1" value="0">,
+          <input type="number" name="num2" value="0">,
+          <input type="number" name="num3" value="1">)<br>
+          point=(
+          <input type="number" name="num4" value="60" max="118" min="0">,
+          <input type="number" name="num5" value="60" max="118" min="0">,
+          <input type="number" name="num6" value="17" max="32" min="0">)<br>
+      </form>
+      <input type="button" value="Replace" id="rep"/>
+      <input type="button" value="Add" id="add"/><br>
+      
       </div>
   <body style="margin:1">
     <script>
